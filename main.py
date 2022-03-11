@@ -21,7 +21,7 @@ def main():
         device = torch.device("cpu")
         print("Training on CPU... May the force be with you...")
 
-    shadow = pretrained.dense_shadow(class_names, pretrained=True)
+    shadow = pretrained.dense_shadow(device, class_names, pretrained=True)
 
     criterion = nn.CrossEntropyLoss()
 

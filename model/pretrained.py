@@ -4,7 +4,7 @@ import torch.nn as nn
 import torch.optim as optim
 from torchvision import datasets, models, transforms
 
-def dense_shadow(class_names, pretrained=True):
+def dense_shadow(device, class_names, pretrained=True):
     """load pretrained densenet"""
     model = models.densenet121(pretrained=pretrained)
     num_ftrs = model.classifier.in_features
