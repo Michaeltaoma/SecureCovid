@@ -1,6 +1,7 @@
 import _pickle as pickle
 import matplotlib.pyplot as plt
 
+
 def visualize_model(model, num_images=6):
     was_training = model.training
     model.eval()
@@ -17,10 +18,10 @@ def visualize_model(model, num_images=6):
 
             for j in range(inputs.size()[0]):
                 images_handeled += 1
-                ax = plt.subplot(num_images//2, 2, images_handeled)
+                ax = plt.subplot(num_images // 2, 2, images_handeled)
                 ax.axis('off')
-                ax.set_title('Actual: {} predicted: {}'.format(class_names[labels[j].item()],class_names[preds[j]]))
-                imshow(inputs.cpu().data[j], (5,5))
+                ax.set_title('Actual: {} predicted: {}'.format(class_names[labels[j].item()], class_names[preds[j]]))
+                imshow(inputs.cpu().data[j], (5, 5))
 
                 if images_handeled == num_images:
                     model.train(mode=was_training)
@@ -28,7 +29,7 @@ def visualize_model(model, num_images=6):
         model.train(mode=was_training)
 
 
-def imshow(inp, size =(30,30), title=None):
+def imshow(inp, size=(30, 30), title=None):
     """Imshow for Tensor."""
     inp = inp.numpy().transpose((1, 2, 0))
     mean = mean_nums
@@ -40,6 +41,7 @@ def imshow(inp, size =(30,30), title=None):
     if title is not None:
         plt.title(title, size=30)
     plt.pause(0.001)  # pause a bit so that plots are updated
+
 
 def toTxt(s, path):
     with open(path, "a+") as text_file:

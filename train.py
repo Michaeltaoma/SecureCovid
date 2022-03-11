@@ -25,7 +25,7 @@ import os
 import shutil
 
 
-def train_model(model, criterion, optimizer, scheduler, num_epochs=10):
+def train_model(model, criterion, optimizer, scheduler, data_sizes, dataloaders, num_epochs=10):
     since = time.time()
 
     best_model_wts = copy.deepcopy(model.state_dict())
@@ -35,12 +35,11 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=10):
         print('Epoch {}/{}'.format(epoch+1, num_epochs))
         print('-' * 10)
 
-        # Each epoch has a training and validation phase
         for phase in ['train', 'val']:
             if phase == 'train':
-                model.train()  # Set model to training mode
+                model.train()
             else:
-                model.eval()   # Set model to evaluate mode
+                model.eval()
 
             current_loss = 0.0
             current_corrects = 0
