@@ -25,7 +25,7 @@ import os
 import shutil
 
 
-def train_model(model, criterion, optimizer, scheduler, data_sizes, dataloaders, num_epochs=10):
+def train_model(device, model, criterion, optimizer, scheduler, data_sizes, dataloaders, num_epochs=10):
     since = time.time()
 
     best_model_wts = copy.deepcopy(model.state_dict())

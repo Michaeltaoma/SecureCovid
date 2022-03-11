@@ -30,7 +30,7 @@ def main():
     # Decay LR by a factor of 0.1 every 7 epochs
     exp_lr_scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=7, gamma=0.1)  # Learning Scheduler
 
-    best_shadow = train.train_model(shadow, criterion, optimizer, exp_lr_scheduler, data_sizes, dataloaders, num_epochs=10)
+    best_shadow = train.train_model(device, shadow, criterion, optimizer, exp_lr_scheduler, data_sizes, dataloaders, num_epochs=10)
 
     torch.save(best_shadow.state_dict, "trained/best_shadow_{}.pth".format(time.time()))
 
