@@ -1,28 +1,8 @@
 import numpy as np
-import pandas as pd
 
 import torch
-import torchvision
-import torch.nn as nn
-import torch.optim as optim
 from torchvision import datasets, models, transforms
 from torch.utils.data.sampler import SubsetRandomSampler
-
-import matplotlib.pyplot as plt
-import time
-import copy
-from random import shuffle
-
-import tqdm.notebook as tqdm
-
-import sklearn
-from sklearn.metrics import accuracy_score, cohen_kappa_score
-from sklearn.metrics import classification_report
-from PIL import Image
-import cv2
-
-import os
-import shutil
 
 mean_nums = [0.485, 0.456, 0.406]
 std_nums = [0.229, 0.224, 0.225]
@@ -39,6 +19,13 @@ data_transforms = {"train": transforms.Compose([
         transforms.ToTensor(),
         transforms.Normalize(mean=mean_nums, std=std_nums)
     ])}
+
+
+test_transforms = transforms.Compose([
+                                      transforms.Resize((150,150)),
+                                      transforms.ToTensor(),
+                                      transforms.Normalize(mean=mean_nums, std=std_nums)
+])
 
 
 def load_split_train_test(datadir, valid_size=.2):

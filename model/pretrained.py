@@ -1,8 +1,6 @@
-import torch
-import torchvision
 import torch.nn as nn
-import torch.optim as optim
-from torchvision import datasets, models, transforms
+from torchvision import models
+
 
 def dense_shadow(device, class_names, pretrained=True):
     """load pretrained densenet"""
