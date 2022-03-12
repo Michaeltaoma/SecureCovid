@@ -2,6 +2,7 @@ import _pickle as pickle
 import matplotlib.pyplot as plt
 import numpy as np
 import itertools
+import preprocess
 
 import torch
 
@@ -43,7 +44,7 @@ def plot_confusion_matrix(cm, target_names, title='Confusion matrix', cmap=None,
     plt.show()
 
 
-def visualize_model(model, num_images=6):
+def visualize_model(device, model, dataloaders, class_names, num_images=6):
     was_training = model.training
     model.eval()
     images_handeled = 0
@@ -73,8 +74,8 @@ def visualize_model(model, num_images=6):
 def imshow(inp, size=(30, 30), title=None):
     """Imshow for Tensor."""
     inp = inp.numpy().transpose((1, 2, 0))
-    mean = mean_nums
-    std = std_nums
+    mean = preprocess.mean_nums
+    std = preprocess.std_nums
     inp = std * inp + mean
     inp = np.clip(inp, 0, 1)
     plt.figure(figsize=size)
