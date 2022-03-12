@@ -7,7 +7,11 @@ import preprocess, util, train
 
 
 def main():
-    DATA_PATH = "../COVID19-DATASET/train"
+
+
+
+    # For what should be in this dir, refer to shadow.ipynb
+    DATA_PATH = "/content/COVID19-DATASET/train"
 
     trainloader, valloader, dataset_size = preprocess.load_split_train_test(DATA_PATH, .2)
     dataloaders = {"train": trainloader, "val": valloader}
@@ -21,7 +25,7 @@ def main():
         device = torch.device("cpu")
         print("Training on CPU... May the force be with you...")
 
-    shadow = pretrained.dense_shadow(class_names, pretrained=True)
+    shadow = pretrained.dense_shadow(device, class_names, pretrained=True)
 
     criterion = nn.CrossEntropyLoss()
 
@@ -32,7 +36,7 @@ def main():
 
     best_shadow = train.train_model(device, shadow, criterion, optimizer, exp_lr_scheduler, data_sizes, dataloaders, num_epochs=10)
 
-    torch.save(best_shadow.state_dict, "trained/best_shadow_{}.pth".format(time.time()))
+    torch.save(best_shadow.state_dict, "/content/drive/MyDrive/MEDICAL/trained/best_shadow_{}.pth".format(time.time()))
 
 
 if __name__ == '__main__':
