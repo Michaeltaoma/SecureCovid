@@ -19,6 +19,10 @@ parser.add_argument('--weight_path',
                     help='Path to load the trained model')
 parser.add_argument('--mode', default='train', type=str, help='Select whether to train, evaluate, inference the model')
 parser.add_argument('--valid_size', default=.2, type=float, help='Proportion of data used as validation set')
+parser.add_argument('--learning_rate', default=.003, type=float, help='Default learning rate')
+parser.add_argument('--step_size', default=7, type=int, help='Default step size')
+parser.add_argument('--gamma', default=0.1, type=float, help='Default gamma')
+parser.add_argument('--epoch', default=10, type=int, help='epoch number')
 args = parser.parse_args()
 
 # For what should be in this dir, refer to shadow.ipynb
@@ -42,16 +46,20 @@ if args.mode.__eq__("train"):
     saved_path = Path(args.out_path)
     saved_path = saved_path.joinpath("best_shadow_{}.pth".format(time.time()))
 
+    learning_rate = args.learning_rate
+    step_size = args.step_size
+    gamma = args.gamma
+    epoch = args.epoch
+
     shadow = pretrained.dense_shadow(device, class_names, pretrained=True)
 
     criterion = nn.CrossEntropyLoss()
 
-    # Specify optimizer which performs Gradient Descent
-    optimizer = optim.Adam(shadow.parameters(), lr=1e-3)
-    # Decay LR by a factor of 0.1 every 7 epochs
-    exp_lr_scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=7, gamma=0.1)  # Learning Scheduler
+    optimizer = optim.Adam(shadow.parameters(), lr=learning_rate)
 
-    best_shadow = train.train_model(device, shadow, criterion, optimizer, exp_lr_scheduler, data_sizes, dataloaders, num_epochs=10)
+    exp_lr_scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=step_size, gamma=gamma)
+
+    best_shadow = train.train_model(device, shadow, criterion, optimizer, exp_lr_scheduler, data_sizes, dataloaders, num_epochs=epoch)
 
     torch.save(best_shadow.state_dict, saved_path)
 
