@@ -61,7 +61,7 @@ if args.mode.__eq__("train"):
 
     best_shadow = train.train_model(device, shadow, criterion, optimizer, exp_lr_scheduler, data_sizes, dataloaders, num_epochs=epoch)
 
-    torch.save(best_shadow.state_dict, saved_path)
+    torch.save(best_shadow.state_dict(), saved_path)
 
 elif args.mode.__eq__("eval"):
     print("to eval")
