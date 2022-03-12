@@ -7,6 +7,10 @@ import preprocess, util, train
 
 
 def main():
+
+
+
+    # For what should be in this dir, refer to shadow.ipynb
     DATA_PATH = "/content/COVID19-DATASET/train"
 
     trainloader, valloader, dataset_size = preprocess.load_split_train_test(DATA_PATH, .2)
