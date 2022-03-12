@@ -36,7 +36,6 @@ def main():
 
     best_shadow = train.train_model(device, shadow, criterion, optimizer, exp_lr_scheduler, data_sizes, dataloaders, num_epochs=10)
 
-
     torch.save(best_shadow.state_dict, "/content/drive/MyDrive/MEDICAL/trained/best_shadow_{}.pth".format(time.time()))
 
 
