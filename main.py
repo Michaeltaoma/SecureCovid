@@ -7,7 +7,7 @@ import preprocess, util, train
 
 
 def main():
-    DATA_PATH = "../COVID19-DATASET/train"
+    DATA_PATH = "/content/COVID19-DATASET/train"
 
     trainloader, valloader, dataset_size = preprocess.load_split_train_test(DATA_PATH, .2)
     dataloaders = {"train": trainloader, "val": valloader}
