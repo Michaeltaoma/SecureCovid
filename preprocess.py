@@ -15,7 +15,7 @@ data_transforms = {"train": transforms.Compose([
     transforms.Normalize(mean=mean_nums, std=std_nums)]),  # Normalizes
     "val": transforms.Compose([
         transforms.Resize((224, 224)),
-        transforms.CenterCrop(150),  # Performs Crop at Center and resizes it to 150x150
+        transforms.CenterCrop(224),  # Performs Crop at Center and resizes it to 150x150
         transforms.ToTensor(),
         transforms.Normalize(mean=mean_nums, std=std_nums)
     ])}

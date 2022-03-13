@@ -23,6 +23,7 @@ parser.add_argument('--learning_rate', default=.003, type=float, help='Default l
 parser.add_argument('--step_size', default=7, type=int, help='Default step size')
 parser.add_argument('--gamma', default=0.1, type=float, help='Default gamma')
 parser.add_argument('--epoch', default=10, type=int, help='epoch number')
+parser.add_argument('--name', default="best_shadow", type=str, help='Name of the model')
 args = parser.parse_args()
 
 # For what should be in this dir, refer to shadow.ipynb
@@ -44,7 +45,7 @@ else:
 
 if args.mode.__eq__("train"):
     saved_path = Path(args.out_path)
-    saved_path = saved_path.joinpath("best_shadow_{}.pth".format(time.time()))
+    saved_path = saved_path.joinpath("{}_{}.pth".format(args.name, time.time()))
 
     learning_rate = args.learning_rate
     step_size = args.step_size
@@ -62,6 +63,8 @@ if args.mode.__eq__("train"):
     best_shadow = train.train_model(device, shadow, criterion, optimizer, exp_lr_scheduler, data_sizes, dataloaders, num_epochs=epoch)
 
     torch.save(best_shadow.state_dict(), saved_path)
+
+    print("Model saved to {}".format(saved_path))
 
 elif args.mode.__eq__("eval"):
     print("to eval")
