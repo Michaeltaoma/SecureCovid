@@ -50,9 +50,9 @@ if args.mode.__eq__("train"):
     gamma = args.gamma
     epoch = args.epoch
 
-    if args.model__eq__("dense"):
+    if args.model.__eq__("dense"):
         shadow = pretrained.dense_shadow(device, class_names, pretrained=True)
-    elif args.model__eq__("covidnet"):
+    elif args.model.__eq__("covidnet"):
         shadow = covid_net.CovidNet(model='small', n_classes=2)
     else:
         shadow = cnn.ConvNet()
