@@ -1,6 +1,4 @@
-import torch
 import torch.nn as nn
-import torch.nn.functional as F
 
 
 class AttackModel(nn.Module):
@@ -16,7 +14,6 @@ class AttackModel(nn.Module):
         self.dropout = nn.Dropout(p=0.1)
         self.batchnorm1 = nn.BatchNorm1d(n_hidden)
         self.batchnorm2 = nn.BatchNorm1d(n_hidden)
-
 
     def forward(self, x):
         x = self.relu(self.layer_1(x))

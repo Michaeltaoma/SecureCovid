@@ -18,12 +18,13 @@ parser.add_argument('--input_path',
 parser.add_argument('--target_path',
                     default='/content/SecureCovid/data/partition/covid_target.pkl',
                     type=str, help='Path to store the data')
-parser.add_argument('--out_path', default='/Users/michaelma/Desktop/Workspace/School/UBC/courses/2021-22-Winter-Term2/EECE571J/project/SecureCovid/data', type=str,
+parser.add_argument('--out_path', default='/content/drive/MyDrive/MEDICAL/trained/attack_model', type=str,
                     help='Path to store the trained model')
 parser.add_argument('--weight_path',
                     default='/content/drive/MyDrive/MEDICAL/trained/best_shadow_1647045058.8686106.pth', type=str,
                     help='Path to load the trained model')
 parser.add_argument('--mode', default='train', type=str, help='Select whether to train, evaluate, inference the model')
+parser.add_argument('--label', default='covid', type=str, help='Select the label for the attack model')
 parser.add_argument('--valid_size', default=.2, type=float, help='Proportion of data used as validation set')
 parser.add_argument('--learning_rate', default=.003, type=float, help='Default learning rate')
 parser.add_argument('--epoch', default=10, type=int, help='epoch number')
@@ -63,7 +64,7 @@ if args.mode.__eq__("train"):
 
     torch.save(best_attack.state_dict(), saved_path)
 
-    print("Attack Model saved to {}".format(saved_path))
+    print("{} Attack Model saved to {}".format(args.label, saved_path))
 
 
 elif args.mode.__eq__("eval"):
