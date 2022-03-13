@@ -54,6 +54,7 @@ if args.mode.__eq__("train"):
         shadow = pretrained.dense_shadow(device, class_names, pretrained=True)
     elif args.model.__eq__("covidnet"):
         shadow = covid_net.CovidNet(model='small', n_classes=2)
+        shadow = shadow.to(device)
     else:
         shadow = cnn.ConvNet()
 
