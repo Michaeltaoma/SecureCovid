@@ -1,6 +1,8 @@
 # SecureCovid
 
-Implementation of secure covid project described in <a href="https://drive.google.com/file/d/1Odv8z8mtWyKuNxhsem-cj6CA3QCb_QnS/view?usp=sharing">propal</a>.
+Implementation of secure covid project described in <a href="https://drive.google.com/file/d/1Odv8z8mtWyKuNxhsem-cj6CA3QCb_QnS/view?usp=sharing">proposal</a>.
+
+can find most of the examples in <code>notebook</code>
 
 ## Shadow Model
 
