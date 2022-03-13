@@ -50,7 +50,7 @@ if args.mode.__eq__("train"):
 
     saved_path = Path(args.out_path)
 
-    saved_path = saved_path.joinpath("{}_{}.pth".format(args.name, time.time()))
+    saved_path = saved_path.joinpath("{}_{}_{}.pth".format(args.label, args.name, time.time()))
 
     learning_rate = args.learning_rate
 
