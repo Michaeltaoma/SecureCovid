@@ -15,12 +15,12 @@ import preprocess
 
 parser = argparse.ArgumentParser(description='Secure Covid')
 parser.add_argument('--input_path',
-                    default='/content/drive/MyDrive/MEDICAL/attack_train/partition/covid_target.pkl',
+                    default='/content/SecureCovid/data/partition/covid_y_pred.pkl',
                     type=str, help='Path to store the data')
 parser.add_argument('--target_path',
-                    default='/content/drive/MyDrive/MEDICAL/attack_train/partition/covid_y_pred.pkl',
+                    default='/content/SecureCovid/data/partition/covid_target.pkl',
                     type=str, help='Path to store the data')
-parser.add_argument('--out_path', default='/content/drive/MyDrive/MEDICAL/trained', type=str,
+parser.add_argument('--out_path', default='/Users/michaelma/Desktop/Workspace/School/UBC/courses/2021-22-Winter-Term2/EECE571J/project/SecureCovid/data', type=str,
                     help='Path to store the trained model')
 parser.add_argument('--weight_path',
                     default='/content/drive/MyDrive/MEDICAL/trained/best_shadow_1647045058.8686106.pth', type=str,
@@ -29,7 +29,7 @@ parser.add_argument('--mode', default='train', type=str, help='Select whether to
 parser.add_argument('--valid_size', default=.2, type=float, help='Proportion of data used as validation set')
 parser.add_argument('--learning_rate', default=.003, type=float, help='Default learning rate')
 parser.add_argument('--epoch', default=10, type=int, help='epoch number')
-parser.add_argument('--name', default="best_shadow", type=str, help='Name of the model')
+parser.add_argument('--name', default="best_attack", type=str, help='Name of the model')
 args = parser.parse_args()
 
 train_path = Path(args.input_path)
