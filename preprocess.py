@@ -22,7 +22,7 @@ data_transforms = {"train": transforms.Compose([
 
 
 test_transforms = transforms.Compose([
-                                      transforms.Resize((150,150)),
+                                      transforms.Resize((224, 224)),
                                       transforms.ToTensor(),
                                       transforms.Normalize(mean=mean_nums, std=std_nums)
 ])
