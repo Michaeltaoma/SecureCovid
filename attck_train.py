@@ -5,13 +5,11 @@ from pathlib import Path
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.utils.data import DataLoader
 
-import preprocess
 from trainer import train
 from data.attck_training_data import AttackData
 from model.attack import AttackModel
-import preprocess
+from preprocess import preprocess
 
 parser = argparse.ArgumentParser(description='Secure Covid')
 parser.add_argument('--input_path',

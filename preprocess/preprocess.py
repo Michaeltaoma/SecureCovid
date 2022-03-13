@@ -26,6 +26,25 @@ test_transforms = transforms.Compose([
     transforms.Normalize(mean=mean_nums, std=std_nums)
 ])
 
+covid_data_transforms = {"train": transforms.Compose([
+    transforms.Resize((224, 224)),  # Resizes all images into same dimension
+    transforms.RandomRotation(10),  # Rotates the images upto Max of 10 Degrees
+    transforms.RandomHorizontalFlip(p=0.4),  # Performs Horizantal Flip over images
+    transforms.ToTensor(),  # Coverts into Tensors
+    transforms.Normalize(mean=mean_nums, std=std_nums)]),  # Normalizes
+    "val": transforms.Compose([
+        transforms.Resize((224, 224)),
+        transforms.CenterCrop(224),  # Performs Crop at Center and resizes it to 150x150
+        transforms.ToTensor(),
+        transforms.Normalize(mean=mean_nums, std=std_nums)
+    ])}
+
+covid_test_transforms = transforms.Compose([
+    transforms.Resize((224, 224)),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=mean_nums, std=std_nums)
+])
+
 
 def load_attack_set(dataset, valid_size):
     train_data = dataset
@@ -45,11 +64,15 @@ def load_attack_set(dataset, valid_size):
     return trainloader, testloader, dataset_size
 
 
-def load_split_train_test(datadir, valid_size=.2):
+def load_split_train_test(datadir, valid_size=.2, transform=None):
+    if transform is None:
+        transform = data_transforms
+    if transform is None:
+        transform = data_transforms
     train_data = datasets.ImageFolder(datadir,
-                                      transform=data_transforms['train'])
+                                      transform=transform['train'])
     test_data = datasets.ImageFolder(datadir,
-                                     transform=data_transforms['val'])
+                                     transform=transform['val'])
     num_train = len(train_data)
     indices = list(range(num_train))
     split = int(np.floor(valid_size * num_train))

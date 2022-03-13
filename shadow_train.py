@@ -6,12 +6,12 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 
-import preprocess
+from preprocess import preprocess
 from trainer import train
 from model import pretrained, covid_net, cnn
 
 parser = argparse.ArgumentParser(description='Secure Covid Shadow Train')
-parser.add_argument('--data_path', default='/content/COVID19-DATASET/', type=str, help='Path to store the data')
+parser.add_argument('--data_path', default='/content/COVID19-DATASET', type=str, help='Path to store the data')
 parser.add_argument('--out_path', default='/content/drive/MyDrive/MEDICAL/trained', type=str,
                     help='Path to store the trained model')
 parser.add_argument('--weight_path',
@@ -32,11 +32,6 @@ DATA_PATH = Path(args.data_path)
 TRAIN_PATH = DATA_PATH.joinpath("train")
 TEST_PATH = DATA_PATH.joinpath("test")
 
-trainloader, valloader, dataset_size = preprocess.load_split_train_test(TRAIN_PATH, args.valid_size)
-dataloaders = {"train": trainloader, "val": valloader}
-data_sizes = {x: len(dataloaders[x].sampler) for x in ['train', 'val']}
-class_names = trainloader.dataset.classes
-
 if torch.cuda.is_available():
     device = torch.device("cuda:0")
     print("Training on GPU... Ready for HyperJump...")
@@ -51,11 +46,25 @@ if args.mode.__eq__("train"):
     epoch = args.epoch
 
     if args.model.__eq__("dense"):
+        trainloader, valloader, dataset_size = preprocess.load_split_train_test(TRAIN_PATH, args.valid_size,
+                                                                                preprocess.data_transforms)
+        dataloaders = {"train": trainloader, "val": valloader}
+        data_sizes = {x: len(dataloaders[x].sampler) for x in ['train', 'val']}
+        class_names = trainloader.dataset.classes
         shadow = pretrained.dense_shadow(device, class_names, pretrained=True)
     elif args.model.__eq__("covidnet"):
+        trainloader, valloader, dataset_size = preprocess.load_split_train_test(TRAIN_PATH, args.valid_size,
+                                                                                transform=preprocess.covid_data_transforms)
+        dataloaders = {"train": trainloader, "val": valloader}
+        data_sizes = {x: len(dataloaders[x].sampler) for x in ['train', 'val']}
+        class_names = trainloader.dataset.classes
         shadow = covid_net.CovidNet(model='small', n_classes=2)
         shadow = shadow.to(device)
     else:
+        trainloader, valloader, dataset_size = preprocess.load_split_train_test(TRAIN_PATH, args.valid_size)
+        dataloaders = {"train": trainloader, "val": valloader}
+        data_sizes = {x: len(dataloaders[x].sampler) for x in ['train', 'val']}
+        class_names = trainloader.dataset.classes
         shadow = cnn.ConvNet()
 
     saved_path = Path(args.out_path)
@@ -67,7 +76,8 @@ if args.mode.__eq__("train"):
 
     exp_lr_scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=step_size, gamma=gamma)
 
-    best_shadow = train.train_model(device, shadow, criterion, optimizer, exp_lr_scheduler, data_sizes, dataloaders, num_epochs=epoch)
+    best_shadow = train.train_model(device, shadow, criterion, optimizer, exp_lr_scheduler, data_sizes, dataloaders,
+                                    num_epochs=epoch)
 
     torch.save(best_shadow.state_dict(), saved_path)
 
