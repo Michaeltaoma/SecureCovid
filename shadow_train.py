@@ -7,8 +7,8 @@ import torch.nn as nn
 import torch.optim as optim
 
 import preprocess
-import train
-from model import pretrained
+from trainer import train
+from model import pretrained, covid_net, cnn
 
 parser = argparse.ArgumentParser(description='Secure Covid Shadow Train')
 parser.add_argument('--data_path', default='/content/COVID19-DATASET/', type=str, help='Path to store the data')
@@ -18,6 +18,7 @@ parser.add_argument('--weight_path',
                     default='/content/drive/MyDrive/MEDICAL/trained/best_shadow_1647045058.8686106.pth', type=str,
                     help='Path to load the trained model')
 parser.add_argument('--mode', default='train', type=str, help='Select whether to train, evaluate, inference the model')
+parser.add_argument('--model', default='dense', type=str, help='Select which model to use')
 parser.add_argument('--valid_size', default=.2, type=float, help='Proportion of data used as validation set')
 parser.add_argument('--learning_rate', default=.003, type=float, help='Default learning rate')
 parser.add_argument('--step_size', default=7, type=int, help='Default step size')
@@ -44,15 +45,20 @@ else:
     print("Training on CPU... May the force be with you...")
 
 if args.mode.__eq__("train"):
-    saved_path = Path(args.out_path)
-    saved_path = saved_path.joinpath("{}_{}.pth".format(args.name, time.time()))
-
     learning_rate = args.learning_rate
     step_size = args.step_size
     gamma = args.gamma
     epoch = args.epoch
 
-    shadow = pretrained.dense_shadow(device, class_names, pretrained=True)
+    if args.model__eq__("dense"):
+        shadow = pretrained.dense_shadow(device, class_names, pretrained=True)
+    elif args.model__eq__("covidnet"):
+        shadow = covid_net.CovidNet(model='small', n_classes=2)
+    else:
+        shadow = cnn.ConvNet()
+
+    saved_path = Path(args.out_path)
+    saved_path = saved_path.joinpath("{}_{}_{}.pth".format(args.mode, args.name, time.time()))
 
     criterion = nn.CrossEntropyLoss()
 

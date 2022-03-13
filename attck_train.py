@@ -8,7 +8,7 @@ import torch.optim as optim
 from torch.utils.data import DataLoader
 
 import preprocess
-import train
+from trainer import train
 from data.attck_training_data import AttackData
 from model.attack import AttackModel
 import preprocess
