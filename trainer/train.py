@@ -54,6 +54,7 @@ def train_attack_model(device, model, criterion, optimizer, dataloaders, num_epo
                 X_val_batch, y_val_batch = X_val_batch.to(device), y_val_batch.to(device)
                 y_val_pred = model(X_val_batch.float()).squeeze()
                 # y_val_pred = torch.unsqueeze(y_val_pred, 0)
+                # y_val_batch = torch.unsqueeze(y_val_batch, 0)
                 val_loss = criterion(y_val_pred, y_val_batch)
                 val_acc = binary_acc(y_val_pred, y_val_batch)
                 val_epoch_loss += val_loss.item()
