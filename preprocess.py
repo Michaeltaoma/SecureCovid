@@ -8,21 +8,21 @@ mean_nums = [0.485, 0.456, 0.406]
 std_nums = [0.229, 0.224, 0.225]
 
 data_transforms = {"train": transforms.Compose([
-    transforms.Resize((224, 224)),  # Resizes all images into same dimension
+    transforms.Resize((150, 150)),  # Resizes all images into same dimension
     transforms.RandomRotation(10),  # Rotates the images upto Max of 10 Degrees
     transforms.RandomHorizontalFlip(p=0.4),  # Performs Horizantal Flip over images
     transforms.ToTensor(),  # Coverts into Tensors
     transforms.Normalize(mean=mean_nums, std=std_nums)]),  # Normalizes
     "val": transforms.Compose([
-        transforms.Resize((224, 224)),
-        transforms.CenterCrop(224),  # Performs Crop at Center and resizes it to 150x150
+        transforms.Resize((150, 150)),
+        transforms.CenterCrop(150),  # Performs Crop at Center and resizes it to 150x150
         transforms.ToTensor(),
         transforms.Normalize(mean=mean_nums, std=std_nums)
     ])}
 
 
 test_transforms = transforms.Compose([
-                                      transforms.Resize((224, 224)),
+                                      transforms.Resize((150, 150)),
                                       transforms.ToTensor(),
                                       transforms.Normalize(mean=mean_nums, std=std_nums)
 ])
