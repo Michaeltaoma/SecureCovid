@@ -10,7 +10,7 @@ import preprocess
 import train
 from model import pretrained
 
-parser = argparse.ArgumentParser(description='Secure Covid')
+parser = argparse.ArgumentParser(description='Secure Covid Shadow Train')
 parser.add_argument('--data_path', default='/content/COVID19-DATASET/', type=str, help='Path to store the data')
 parser.add_argument('--out_path', default='/content/drive/MyDrive/MEDICAL/trained', type=str,
                     help='Path to store the trained model')
@@ -64,7 +64,7 @@ if args.mode.__eq__("train"):
 
     torch.save(best_shadow.state_dict(), saved_path)
 
-    print("Model saved to {}".format(saved_path))
+    print("Shadow Model saved to {}".format(saved_path))
 
 elif args.mode.__eq__("eval"):
     print("to eval")
