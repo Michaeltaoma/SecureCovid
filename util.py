@@ -60,6 +60,16 @@ class MetricTracker:
         return s
 
 
+def toFig(loss_rec, acc_rec, saved_path, added_name=""):
+    epoch = len(loss_rec)
+    plt.plot(range(epoch), loss_rec)
+    plt.plot(range(epoch), acc_rec)
+    plt.title("{} Model training".format(added_name))
+    plt.xlabel("Epoch")
+    plt.ylabel("Metrics")
+    plt.savefig(saved_path)
+
+
 def write_csv(data, name):
     """
     Args:

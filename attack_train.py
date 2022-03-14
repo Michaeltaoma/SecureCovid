@@ -10,6 +10,7 @@ from trainer import train
 from data.attck_training_data import AttackData
 from model.attack import AttackModel
 from preprocess import preprocess
+import util
 
 parser = argparse.ArgumentParser(description='Secure Covid')
 parser.add_argument('--input_path',
@@ -23,6 +24,7 @@ parser.add_argument('--out_path', default='/content/drive/MyDrive/MEDICAL/traine
 parser.add_argument('--weight_path',
                     default='/content/drive/MyDrive/MEDICAL/trained/best_shadow_1647045058.8686106.pth', type=str,
                     help='Path to load the trained model')
+parser.add_argument('--res_path', default='/content/drive/MyDrive/EECE571J/m2_result', type=str, help='Path to store the result')
 parser.add_argument('--mode', default='train', type=str, help='Select whether to train, evaluate, inference the model')
 parser.add_argument('--label', default='covid', type=str, help='Select the label for the attack model')
 parser.add_argument('--valid_size', default=.25, type=float, help='Proportion of data used as validation set')
@@ -49,8 +51,11 @@ else:
 if args.mode.__eq__("train"):
 
     saved_path = Path(args.out_path)
-
     saved_path = saved_path.joinpath("{}_{}_{}.pth".format(args.label, args.name, time.time()))
+
+    result_path = Path(args.res_path)
+    train_result_path = result_path.joinpath("train_{}_{}_{}.png".format(args.label, args.name, time.time()))
+    val_result_path = result_path.joinpath("val_{}_{}_{}.png".format(args.label, args.name, time.time()))
 
     learning_rate = args.learning_rate
 
@@ -60,7 +65,10 @@ if args.mode.__eq__("train"):
 
     optimizer = optim.Adam(attack.parameters(), lr=learning_rate)
 
-    best_attack = train.train_attack_model(device, attack, criterion, optimizer, dataloaders, 20)
+    best_attack, loss_stat, accuracy_stat = train.train_attack_model(device, attack, criterion, optimizer, dataloaders, 20)
+
+    util.toFig(loss_stat['train'], accuracy_stat['train'], train_result_path, "Train")
+    util.toFig(loss_stat['val'], accuracy_stat['val'], val_result_path, "Val")
 
     torch.save(best_attack.state_dict(), saved_path)
 
