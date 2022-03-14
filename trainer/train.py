@@ -116,7 +116,7 @@ def train_model(device, model, criterion, optimizer, scheduler, data_sizes, data
             epoch_loss = current_loss / data_sizes[phase]
             epoch_acc = current_corrects.double() / data_sizes[phase]
             epoch_loss_record.append(epoch_loss)
-            epoch_acc_record.append(epoch_acc)
+            epoch_acc_record.append(epoch_acc.cpu())
             if phase == 'val':
                 epoch_kappa = np.mean(val_kappa)
                 print('{} Loss: {:.4f} | {} Accuracy: {:.4f} | Kappa Score: {:.4f}'.format(

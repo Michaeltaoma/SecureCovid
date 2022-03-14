@@ -68,11 +68,14 @@ if args.mode.__eq__("train"):
     best_attack, loss_stat, accuracy_stat = train.train_attack_model(device, attack, criterion, optimizer, dataloaders, 20)
 
     util.toFig(loss_stat['train'], accuracy_stat['train'], train_result_path, "Train")
+
     util.toFig(loss_stat['val'], accuracy_stat['val'], val_result_path, "Val")
 
     torch.save(best_attack.state_dict(), saved_path)
 
     print("{} Attack Model saved to {}".format(args.label, saved_path))
+
+    print("Result image saved to {}".format(result_path))
 
 
 elif args.mode.__eq__("eval"):

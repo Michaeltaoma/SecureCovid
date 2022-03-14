@@ -93,6 +93,8 @@ if args.mode.__eq__("train"):
 
     print("Shadow Model saved to {}".format(saved_path))
 
+    print("Result image saved to {}".format(result_path))
+
 elif args.mode.__eq__("eval"):
     print("to eval")
 
