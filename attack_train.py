@@ -24,7 +24,7 @@ parser.add_argument('--out_path', default='/content/drive/MyDrive/MEDICAL/traine
 parser.add_argument('--weight_path',
                     default='/content/drive/MyDrive/MEDICAL/trained/best_shadow_1647045058.8686106.pth', type=str,
                     help='Path to load the trained model')
-parser.add_argument('--res_path', default='/content/drive/MyDrive/EECE571J/m2_result', type=str, help='Path to store the result')
+parser.add_argument('--res_path', default='/content/drive/MyDrive/EECE571J/m2_result/final_folder', type=str, help='Path to store the result')
 parser.add_argument('--mode', default='train', type=str, help='Select whether to train, evaluate, inference the model')
 parser.add_argument('--label', default='covid', type=str, help='Select the label for the attack model')
 parser.add_argument('--valid_size', default=.25, type=float, help='Proportion of data used as validation set')

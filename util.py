@@ -67,6 +67,7 @@ def toFig(loss_rec, acc_rec, saved_path, added_name=""):
     plt.title("{} Model training".format(added_name))
     plt.xlabel("Epoch")
     plt.ylabel("Metrics")
+    plt.legend(loc='upper right')
     plt.savefig(saved_path)
 
 
