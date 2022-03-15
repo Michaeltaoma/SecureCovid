@@ -1,6 +1,11 @@
 # SecureCovid
 
-Implementation of secure covid project described in <a href="https://drive.google.com/file/d/1Odv8z8mtWyKuNxhsem-cj6CA3QCb_QnS/view?usp=sharing">propal</a>.
+Implementation of secure covid project described in <a href="https://drive.google.com/file/d/1Odv8z8mtWyKuNxhsem-cj6CA3QCb_QnS/view?usp=sharing">proposal</a>.
+
+<p>In this project, our goal is to assess the effectiveness of differential privacy, a framework for protecting privacy of ML model.
+</p>
+
+can find most of the examples in <code>notebook</code>
 
 ## Shadow Model
 

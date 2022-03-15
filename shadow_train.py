@@ -9,14 +9,18 @@ import torch.optim as optim
 from preprocess import preprocess
 from trainer import train
 from model import pretrained, covid_net, cnn
+import util
 
 parser = argparse.ArgumentParser(description='Secure Covid Shadow Train')
 parser.add_argument('--data_path', default='/content/COVID19-DATASET', type=str, help='Path to store the data')
+# parser.add_argument('--data_path', default='/Users/michaelma/Desktop/Workspace/School/UBC/courses/2021-22-Winter-Term2/EECE571J/project/data/content/COVID19-DATASET', type=str, help='Path to store the data')
 parser.add_argument('--out_path', default='/content/drive/MyDrive/MEDICAL/trained', type=str,
                     help='Path to store the trained model')
 parser.add_argument('--weight_path',
                     default='/content/drive/MyDrive/MEDICAL/trained/best_shadow_1647045058.8686106.pth', type=str,
                     help='Path to load the trained model')
+parser.add_argument('--res_path', default='/content/drive/MyDrive/EECE571J/m2_result/final_folder', type=str,
+                    help='Path to store the training result')
 parser.add_argument('--mode', default='train', type=str, help='Select whether to train, evaluate, inference the model')
 parser.add_argument('--model', default='dense', type=str, help='Select which model to use')
 parser.add_argument('--valid_size', default=.2, type=float, help='Proportion of data used as validation set')
@@ -70,18 +74,26 @@ if args.mode.__eq__("train"):
     saved_path = Path(args.out_path)
     saved_path = saved_path.joinpath("{}_{}_{}.pth".format(args.mode, args.name, time.time()))
 
+    result_path = Path(args.res_path)
+    result_path = result_path.joinpath("{}_{}_{}.png".format(args.mode, args.name, time.time()))
+
     criterion = nn.CrossEntropyLoss()
 
     optimizer = optim.Adam(shadow.parameters(), lr=learning_rate)
 
     exp_lr_scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=step_size, gamma=gamma)
 
-    best_shadow = train.train_model(device, shadow, criterion, optimizer, exp_lr_scheduler, data_sizes, dataloaders,
-                                    num_epochs=epoch)
+    best_shadow, epoch_loss_record, epoch_acc_record = train.train_model(device, shadow, criterion, optimizer,
+                                                                         exp_lr_scheduler, data_sizes, dataloaders,
+                                                                         num_epochs=epoch)
+
+    util.toFig(epoch_loss_record, epoch_acc_record, result_path)
 
     torch.save(best_shadow.state_dict(), saved_path)
 
     print("Shadow Model saved to {}".format(saved_path))
+
+    print("Result image saved to {}".format(result_path))
 
 elif args.mode.__eq__("eval"):
     print("to eval")

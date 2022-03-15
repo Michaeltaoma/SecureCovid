@@ -66,7 +66,7 @@ def train_attack_model(device, model, criterion, optimizer, dataloaders, num_epo
         print(
             f'Epoch {e + 0:02}: | Train Loss: {train_epoch_loss / len(train_loader):.5f} | Val Loss: {val_epoch_loss / len(val_loader):.5f} | Train Acc: {train_epoch_acc / len(train_loader):.3f}%| Val Acc: {val_epoch_acc / len(val_loader):.3f}%')
 
-    return model
+    return model, loss_stats, accuracy_stats
 
 
 def train_model(device, model, criterion, optimizer, scheduler, data_sizes, dataloaders, num_epochs=10):
@@ -74,6 +74,9 @@ def train_model(device, model, criterion, optimizer, scheduler, data_sizes, data
 
     best_model_wts = copy.deepcopy(model.state_dict())
     best_loss = np.inf
+
+    epoch_loss_record = list()
+    epoch_acc_record = list()
 
     for epoch in range(num_epochs):
         print('Epoch {}/{}'.format(epoch + 1, num_epochs))
@@ -112,6 +115,8 @@ def train_model(device, model, criterion, optimizer, scheduler, data_sizes, data
                 val_kappa.append(cohen_kappa_score(preds.cpu().numpy(), labels.data.cpu().numpy()))
             epoch_loss = current_loss / data_sizes[phase]
             epoch_acc = current_corrects.double() / data_sizes[phase]
+            epoch_loss_record.append(epoch_loss)
+            epoch_acc_record.append(epoch_acc.cpu())
             if phase == 'val':
                 epoch_kappa = np.mean(val_kappa)
                 print('{} Loss: {:.4f} | {} Accuracy: {:.4f} | Kappa Score: {:.4f}'.format(
@@ -133,4 +138,5 @@ def train_model(device, model, criterion, optimizer, scheduler, data_sizes, data
     print('Best val loss: {:.4f}'.format(best_loss))
 
     model.load_state_dict(best_model_wts)
-    return model
+
+    return model, epoch_loss_record, epoch_acc_record
