@@ -10,10 +10,13 @@ from preprocess import preprocess
 from trainer import train
 from model import pretrained, covid_net, cnn
 import util
+from opacus import PrivacyEngine
+from opacus.validators import ModuleValidator
+
 
 parser = argparse.ArgumentParser(description='Secure Covid Shadow Train')
-parser.add_argument('--data_path', default='/content/COVID19-DATASET', type=str, help='Path to store the data')
-# parser.add_argument('--data_path', default='/Users/michaelma/Desktop/Workspace/School/UBC/courses/2021-22-Winter-Term2/EECE571J/project/data/content/COVID19-DATASET', type=str, help='Path to store the data')
+# parser.add_argument('--data_path', default='/content/COVID19-DATASET', type=str, help='Path to store the data')
+parser.add_argument('--data_path', default='/Users/michaelma/Desktop/Workspace/School/UBC/courses/2021-22-Winter-Term2/EECE571J/project/data/content/COVID19-DATASET', type=str, help='Path to store the data')
 parser.add_argument('--out_path', default='/content/drive/MyDrive/MEDICAL/trained', type=str,
                     help='Path to store the trained model')
 parser.add_argument('--weight_path',
@@ -82,6 +85,25 @@ if args.mode.__eq__("train"):
     optimizer = optim.Adam(shadow.parameters(), lr=learning_rate)
 
     exp_lr_scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=step_size, gamma=gamma)
+
+    MAX_GRAD_NORM = 1.2
+    EPSILON = 50.0
+    DELTA = 1e-5
+
+    shadow = ModuleValidator.fix(shadow)
+
+    privacy_engine = PrivacyEngine()
+
+    shadow, optimizer, dataloaders = privacy_engine.make_private_with_epsilon(
+        module=shadow,
+        optimizer=optimizer,
+        data_loader=dataloaders["train"],
+        epochs=args.epoch,
+        target_epsilon=EPSILON,
+        target_delta=DELTA,
+        # noise_multiplier=1.1,
+        max_grad_norm=1.2,
+    )
 
     best_shadow, epoch_loss_record, epoch_acc_record = train.train_model(device, shadow, criterion, optimizer,
                                                                          exp_lr_scheduler, data_sizes, dataloaders,
