@@ -101,7 +101,7 @@ if args.mode.__eq__("train"):
         epochs=args.epoch,
         target_epsilon=EPSILON,
         target_delta=DELTA,
-        noise_multiplier=1.1,
+        # noise_multiplier=1.1,
         max_grad_norm=1.2,
     )
 

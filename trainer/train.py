@@ -82,7 +82,8 @@ def train_model(device, model, criterion, optimizer, scheduler, data_sizes, data
         print('Epoch {}/{}'.format(epoch + 1, num_epochs))
         print('-' * 10)
 
-        for phase in ['train', 'val']:
+        # for phase in ['train', 'val']:
+        for phase in ['train']:
             if phase == 'train':
                 model.train()
             else:
@@ -93,7 +94,7 @@ def train_model(device, model, criterion, optimizer, scheduler, data_sizes, data
             current_kappa = 0
             val_kappa = list()
 
-            for inputs, labels in tqdm.tqdm(dataloaders[phase], desc=phase, leave=False):
+            for inputs, labels in tqdm.tqdm(dataloaders, desc=phase, leave=False):
                 inputs = inputs.to(device)
                 labels = labels.to(device)
 
