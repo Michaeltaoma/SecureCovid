@@ -8,7 +8,7 @@ import torch.optim as optim
 
 from preprocess import preprocess
 from trainer import train
-from model import pretrained, covid_net, cnn
+from model import pretrained, covid_net, cnn, model_manager
 import util
 from opacus import PrivacyEngine
 from opacus.validators import ModuleValidator
@@ -52,27 +52,9 @@ if args.mode.__eq__("train"):
     gamma = args.gamma
     epoch = args.epoch
 
-    if args.model.__eq__("dense"):
-        trainloader, valloader, dataset_size = preprocess.load_split_train_test(TRAIN_PATH, args.valid_size,
-                                                                                preprocess.data_transforms)
-        dataloaders = {"train": trainloader, "val": valloader}
-        data_sizes = {x: len(dataloaders[x].sampler) for x in ['train', 'val']}
-        class_names = trainloader.dataset.classes
-        shadow = pretrained.dense_shadow(device, class_names, pretrained=True)
-    elif args.model.__eq__("covidnet"):
-        trainloader, valloader, dataset_size = preprocess.load_split_train_test(TRAIN_PATH, args.valid_size,
-                                                                                transform=preprocess.covid_data_transforms)
-        dataloaders = {"train": trainloader, "val": valloader}
-        data_sizes = {x: len(dataloaders[x].sampler) for x in ['train', 'val']}
-        class_names = trainloader.dataset.classes
-        shadow = covid_net.CovidNet(model='small', n_classes=2)
-        shadow = shadow.to(device)
-    else:
-        trainloader, valloader, dataset_size = preprocess.load_split_train_test(TRAIN_PATH, args.valid_size)
-        dataloaders = {"train": trainloader, "val": valloader}
-        data_sizes = {x: len(dataloaders[x].sampler) for x in ['train', 'val']}
-        class_names = trainloader.dataset.classes
-        shadow = cnn.ConvNet()
+    dataloaders, data_sizes, class_names = preprocess.get_train_resource(args.model, TRAIN_PATH, args.valid_size)
+
+    shadow = model_manager.load_model(device, args.model, class_names)
 
     saved_path = Path(args.out_path)
     saved_path = saved_path.joinpath("{}_{}_{}.pth".format(args.mode, args.name, time.time()))
@@ -121,4 +103,13 @@ elif args.mode.__eq__("eval"):
     print("to eval")
 
 elif args.mode.__eq__("infer"):
+    # load model
+    model_path = args.weight_path
+
+    dataloaders, data_sizes, class_names = preprocess.get_train_resource(args.model, TRAIN_PATH, args.valid_size)
+        
+    shadow = model_manager.load_model(device, args.model, class_names)
+
+    shadow.load_state_dict(torch.load(model_path))
+
     print("to infer")

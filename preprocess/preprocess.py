@@ -104,3 +104,18 @@ def load_all_train(datadir, valid_size=0.0):
     trainloader = torch.utils.data.DataLoader(train_data,
                                               sampler=train_sampler, batch_size=1)
     return trainloader
+
+
+def get_train_resource(model_name, train_path, valid_size):
+    if model_name.__eq__("dense"):
+        trainloader, valloader, dataset_size = load_split_train_test(train_path, valid_size, data_transforms)
+    elif model_name.__eq__("covidnet"):
+        trainloader, valloader, dataset_size = load_split_train_test(train_path, valid_size, covid_data_transforms)
+    else:
+        trainloader, valloader, dataset_size = load_split_train_test(train_path, valid_size, data_transforms)
+
+    dataloaders = {"train": trainloader, "val": valloader}
+    data_sizes = {x: len(dataloaders[x].sampler) for x in ['train', 'val']}
+    class_names = trainloader.dataset.classes
+
+    return dataloaders, dataset_size, class_names
