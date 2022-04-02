@@ -88,21 +88,8 @@ def load_split_train_test(datadir, valid_size=.2, transform=None):
     return trainloader, testloader, dataset_size
 
 
-def load_all_train(datadir, valid_size=0.0):
-    train_data = datasets.ImageFolder(datadir,
-                                      transform=preprocess.data_transforms['train'])
-    test_data = datasets.ImageFolder(datadir,
-                                     transform=preprocess.data_transforms['val'])
-    num_train = len(train_data)
-    indices = list(range(num_train))
-    split = int(np.floor(valid_size * num_train))
-    np.random.shuffle(indices)
-    train_idx, test_idx = indices[split:], indices[:split]
-    dataset_size = {"train": len(train_idx), "val": len(test_idx)}
-    train_sampler = SubsetRandomSampler(train_idx)
-    test_sampler = SubsetRandomSampler(test_idx)
-    trainloader = torch.utils.data.DataLoader(train_data,
-                                              sampler=train_sampler, batch_size=1)
+def load_all_train(datadir, transform=None):
+    trainloader, _, _ = load_split_train_test(datadir, 0.0, transform)
     return trainloader
 
 
