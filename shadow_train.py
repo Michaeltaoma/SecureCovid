@@ -13,7 +13,6 @@ import util
 from opacus import PrivacyEngine
 from opacus.validators import ModuleValidator
 
-
 parser = argparse.ArgumentParser(description='Secure Covid Shadow Train')
 # parser.add_argument('--data_path', default='/content/COVID19-DATASET', type=str, help='Path to store the data')
 parser.add_argument('--data_path', default='/Users/michaelma/Desktop/Workspace/School/UBC/courses/2021-22-Winter-Term2/EECE571J/project/data/content/COVID19-DATASET', type=str, help='Path to store the data')
@@ -25,7 +24,8 @@ parser.add_argument('--weight_path',
 parser.add_argument('--res_path', default='/content/drive/MyDrive/EECE571J/m2_result/final_folder', type=str,
                     help='Path to store the training result')
 parser.add_argument('--mode', default='train', type=str, help='Select whether to train, evaluate, inference the model')
-parser.add_argument('--model', default='dense', type=str, help='Select which model to use')
+parser.add_argument('--dp', default=False, type=bool, help='Use dp?')
+parser.add_argument('--model', default='covidnet', type=str, help='Select which model to use')
 parser.add_argument('--valid_size', default=.2, type=float, help='Proportion of data used as validation set')
 parser.add_argument('--learning_rate', default=.003, type=float, help='Default learning rate')
 parser.add_argument('--step_size', default=7, type=int, help='Default step size')
@@ -62,34 +62,46 @@ if args.mode.__eq__("train"):
     result_path = Path(args.res_path)
     result_path = result_path.joinpath("{}_{}_{}.png".format(args.mode, args.name, time.time()))
 
-    criterion = nn.CrossEntropyLoss()
+    if args.dp:
+        print("dp")
+        criterion = nn.CrossEntropyLoss()
 
-    optimizer = optim.Adam(shadow.parameters(), lr=learning_rate)
+        optimizer = optim.Adam(shadow.parameters(), lr=learning_rate)
 
-    exp_lr_scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=step_size, gamma=gamma)
+        exp_lr_scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=step_size, gamma=gamma)
 
-    MAX_GRAD_NORM = 1.2
-    EPSILON = 50.0
-    DELTA = 1e-5
+        MAX_GRAD_NORM = 1.2
+        EPSILON = 50.0
+        DELTA = 1e-5
 
-    shadow = ModuleValidator.fix(shadow)
+        shadow = ModuleValidator.fix(shadow)
 
-    privacy_engine = PrivacyEngine()
+        privacy_engine = PrivacyEngine()
 
-    shadow, optimizer, dataloaders = privacy_engine.make_private_with_epsilon(
-        module=shadow,
-        optimizer=optimizer,
-        data_loader=dataloaders["train"],
-        epochs=args.epoch,
-        target_epsilon=EPSILON,
-        target_delta=DELTA,
-        # noise_multiplier=1.1,
-        max_grad_norm=1.2,
-    )
+        shadow, optimizer, dataloaders = privacy_engine.make_private_with_epsilon(
+            module=shadow,
+            optimizer=optimizer,
+            data_loader=dataloaders["train"],
+            epochs=args.epoch,
+            target_epsilon=EPSILON,
+            target_delta=DELTA,
+            # noise_multiplier=1.1,
+            max_grad_norm=1.2,
+        )
 
-    best_shadow, epoch_loss_record, epoch_acc_record = train.train_model(device, shadow, criterion, optimizer,
-                                                                         exp_lr_scheduler, data_sizes, dataloaders,
-                                                                         num_epochs=epoch)
+        best_shadow, epoch_loss_record, epoch_acc_record = train.train_model_with_dp(device, shadow, criterion, optimizer,
+                                                                             exp_lr_scheduler, data_sizes, dataloaders,
+                                                                             num_epochs=epoch)
+    else:
+        criterion = nn.CrossEntropyLoss()
+
+        optimizer = optim.Adam(shadow.parameters(), lr=learning_rate)
+
+        exp_lr_scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=step_size, gamma=gamma)
+
+        best_shadow, epoch_loss_record, epoch_acc_record = train.train_model(device, shadow, criterion, optimizer,
+                                                                             exp_lr_scheduler, data_sizes, dataloaders,
+                                                                             num_epochs=epoch)
 
     util.toFig(epoch_loss_record, epoch_acc_record, result_path)
 
@@ -103,13 +115,4 @@ elif args.mode.__eq__("eval"):
     print("to eval")
 
 elif args.mode.__eq__("infer"):
-    # load model
-    model_path = args.weight_path
-
-    dataloaders, data_sizes, class_names = preprocess.get_train_resource(args.model, TRAIN_PATH, args.valid_size)
-        
-    shadow = model_manager.load_model(device, args.model, class_names)
-
-    shadow.load_state_dict(torch.load(model_path))
-
     print("to infer")
