@@ -8,56 +8,15 @@ import os
 import torch
 
 
-class MetricTracker:
-    def __init__(self, *keys, writer=None, mode='/'):
+def prepare_name(df_dir):
+    """
 
-        self.writer = writer
-        self.mode = mode + '/'
-        self.keys = keys
-        # print(self.keys)
-        self._data = pd.DataFrame(index=keys, columns=['total', 'counts', 'average'])
-        self.reset()
+    :param df_dir: dir for csv
+    :return: list of names
+    """
 
-    def reset(self):
-        for col in self._data.columns:
-            self._data[col].values[:] = 0
-
-    def update(self, key, value, n=1, writer_step=1):
-        if self.writer is not None:
-            self.writer.add_scalar(self.mode + key, value, writer_step)
-        self._data.total[key] += value
-        self._data.counts[key] += n
-        self._data.average[key] = self._data.total[key] / self._data.counts[key]
-
-    def update_all_metrics(self, values_dict, n=1, writer_step=1):
-        for key in values_dict:
-            self.update(key, values_dict[key], n, writer_step)
-
-    def avg(self, key):
-        return self._data.average[key]
-
-    def result(self):
-        return dict(self._data.average)
-
-    def calc_all_metrics(self):
-        """
-        Calculates string with all the metrics
-        Returns:
-        """
-        s = ''
-        d = dict(self._data.average)
-        for key in dict(self._data.average):
-            s += f'{key} {d[key]:7.4f}\t'
-
-        return s
-
-    def print_all_metrics(self):
-        s = ''
-        d = dict(self._data.average)
-        for key in dict(self._data.average):
-            s += "{} {:.4f}\t".format(key, d[key])
-
-        return s
+    df = pd.read_csv(df_dir, delimiter=" ", header=None)
+    return list(df[1])
 
 
 def toFig(loss_rec, acc_rec, saved_path, added_name=""):
