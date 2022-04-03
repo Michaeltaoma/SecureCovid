@@ -69,7 +69,7 @@ if args.mode.__eq__("train"):
                                                                          exp_lr_scheduler, data_sizes, dataloaders,
                                                                          num_epochs=epoch)
 
-    util.toFig(epoch_loss_record, epoch_acc_record, result_path)
+    # util.toFig(epoch_loss_record, epoch_acc_record, result_path)
 
     torch.save(best_shadow.state_dict(), saved_path)
 
