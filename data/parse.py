@@ -28,21 +28,22 @@ def parse_table(df, shadow_size=100):
 
 
 train_data_root = Path(
-    "/Users/michaelma/Desktop/Workspace/School/UBC/courses/2021-22-Winter-Term2/EECE571J/project/data/archive/train.txt")
+    "/Users/michaelma/Desktop/Workspace/School/UBC/courses/2021-22-Winter-Term2/EECE571J/project/data/cxr3/train.txt")
 test_data_root = Path(
-    "/Users/michaelma/Desktop/Workspace/School/UBC/courses/2021-22-Winter-Term2/EECE571J/project/data/archive/test.txt")
+    "/Users/michaelma/Desktop/Workspace/School/UBC/courses/2021-22-Winter-Term2/EECE571J/project/data/cxr3/test.txt")
 
 csv_path = Path("/Users/michaelma/desktop/workspace/School/ubc/courses/2021-22-Winter-Term2/EECE571J/project/SecureCovid/data/train_test")
 
-total_shadow_sizes = 100
-df = pd.read_csv(train_data_root, delimiter=" ", header=None)
-train_res = parse_table(df, total_shadow_sizes)
+# total_shadow_sizes = 500
+# df = pd.read_csv(train_data_root, delimiter=" ", header=None)
+# train_res = parse_table(df, total_shadow_sizes)
+#
+# for model in ["target", "shadow"]:
+#     for classes in ["pos", "neg"]:
+#         cur_csv_path = csv_path.joinpath("train_{}_{}_{}.csv".format(model, classes, total_shadow_sizes))
+#         train_res[model][classes].to_csv(cur_csv_path, sep=' ')
 
-for model in ["target", "shadow"]:
-    for classes in ["pos", "neg"]:
-        cur_csv_path = csv_path.joinpath("train_{}_{}_{}.csv".format(model, classes, total_shadow_sizes))
-        train_res[model][classes].to_csv(cur_csv_path, sep=' ')
-
+total_shadow_sizes = 200
 df = pd.read_csv(test_data_root, delimiter=" ", header=None)
 test_res = parse_table(df, total_shadow_sizes)
 

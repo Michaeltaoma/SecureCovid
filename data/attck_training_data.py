@@ -8,9 +8,6 @@ class AttackData(Dataset):
         self.x = np.array(util.fromPickle(x_path), dtype="float64")
         self.x = self.x.reshape(self.x.shape[0], 2)
         self.y = np.array(util.fromPickle(y_path), dtype="float64")
-        # y = util.fromPickle(y_path)
-        # y = np.array([np.array([i], dtype="float64") for i in y])
-        # self.y = y.reshape(y.shape[0], 1)
 
     def __len__(self):
         return len(self.x)
