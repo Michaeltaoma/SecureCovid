@@ -14,10 +14,10 @@ import util
 
 parser = argparse.ArgumentParser(description='Secure Covid')
 parser.add_argument('--input_path',
-                    default='/content/drive/MyDrive/MEDICAL/attack_train/partition/covid_y_pred.pkl',
+                    default='/Users/michaelma/Desktop/Workspace/School/UBC/courses/2021-22-Winter-Term2/EECE571J/project/SecureCovid/data/partition/covid_y_pred.pkl',
                     type=str, help='Path to store the data')
 parser.add_argument('--target_path',
-                    default='/content/drive/MyDrive/MEDICAL/attack_train/partition/covid_target.pkl',
+                    default='/Users/michaelma/Desktop/Workspace/School/UBC/courses/2021-22-Winter-Term2/EECE571J/project/SecureCovid/data/partition/covid_target.pkl',
                     type=str, help='Path to store the data')
 parser.add_argument('--out_path', default='/content/drive/MyDrive/MEDICAL/trained/attack_model', type=str,
                     help='Path to store the trained model')
