@@ -15,7 +15,7 @@ def prepare_name(df_dir):
     :return: list of names
     """
 
-    df = pd.read_csv(df_dir, delimiter=" ", header=None)
+    df = pd.read_csv(df_dir, sep=" ", header=None)
     return list(df[1])
 
 
@@ -158,3 +158,5 @@ def fromPickle(path):
     with open(path, 'rb') as handle:
         obj = pickle.load(handle)
     return obj
+
+

@@ -35,19 +35,19 @@ test_data_root = Path(
 csv_path = Path("/Users/michaelma/desktop/workspace/School/ubc/courses/2021-22-Winter-Term2/EECE571J/project/SecureCovid/data/train_test")
 
 # total_shadow_sizes = 500
-# df = pd.read_csv(train_data_root, delimiter=" ", header=None)
+# df = pd.read_csv(train_data_root, sep=" ", header=None)
 # train_res = parse_table(df, total_shadow_sizes)
 #
 # for model in ["target", "shadow"]:
 #     for classes in ["pos", "neg"]:
 #         cur_csv_path = csv_path.joinpath("train_{}_{}_{}.csv".format(model, classes, total_shadow_sizes))
-#         train_res[model][classes].to_csv(cur_csv_path, sep=' ')
+#         train_res[model][classes].to_csv(cur_csv_path, sep=' ', index=False)
 
 total_shadow_sizes = 200
-df = pd.read_csv(test_data_root, delimiter=" ", header=None)
+df = pd.read_csv(test_data_root, sep=" ", header=None)
 test_res = parse_table(df, total_shadow_sizes)
 
 for model in ["target", "shadow"]:
     for classes in ["pos", "neg"]:
         cur_csv_path = csv_path.joinpath("test_{}_{}_{}.csv".format(model, classes, total_shadow_sizes))
-        test_res[model][classes].to_csv(cur_csv_path, sep=' ')
+        test_res[model][classes].to_csv(cur_csv_path, sep=" ", index=False)
