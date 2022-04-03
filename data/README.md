@@ -7,13 +7,13 @@ Extracted from <a href="https://www.kaggle.com/datasets/andyczhao/covidx-cxr2?da
 | Train | 13992    | 16490    | 30482 |
 | Test  | 200      | 200      | 400   |
 
-#### Target Model
+#### Target Model Data Structure
 | Type  | Negative | Positive | Total |
 | ----- | -------- | -------- | ----- |
 | Train | 13492    | 15990    | 29482 |
 | Test  | 0      | 0      | 0   |
 
-#### All Shadow Model
+#### All Shadow Model Data Structure
 | Type  | Negative | Positive | Total |
 | ----- | -------- | -------- | ----- |
 | Train | 500    | 500  | 1000|
