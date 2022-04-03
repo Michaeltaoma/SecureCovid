@@ -10,8 +10,6 @@ from preprocess import preprocess
 from trainer import train
 from model import model_manager
 import util
-from opacus import PrivacyEngine
-from opacus.validators import ModuleValidator
 
 parser = argparse.ArgumentParser(description='Secure Covid Shadow Train')
 # parser.add_argument('--data_path', default='/content/COVID19-DATASET', type=str, help='Path to store the data')
