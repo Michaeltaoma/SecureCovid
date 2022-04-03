@@ -5,6 +5,7 @@ import numpy as np
 import torch
 import tqdm.notebook as tqdm
 from sklearn.metrics import cohen_kappa_score
+from torch.nn.utils import clip_grad_norm_
 
 
 def binary_acc(y_pred, y_test):
@@ -82,7 +83,8 @@ def train_model(device, model, criterion, optimizer, scheduler, data_sizes, data
         print('Epoch {}/{}'.format(epoch + 1, num_epochs))
         print('-' * 10)
 
-        for phase in ['train', 'val']:
+        # for phase in ['train', 'val']:
+        for phase in ['train']:
             if phase == 'train':
                 model.train()
             else:
@@ -140,3 +142,52 @@ def train_model(device, model, criterion, optimizer, scheduler, data_sizes, data
     model.load_state_dict(best_model_wts)
 
     return model, epoch_loss_record, epoch_acc_record
+
+
+def train_model_with_dp(device, model, criterion, dataloaders, num_epochs=10, noise_multiplier=1.0, max_grad_norm=1.2, lr=0.02):
+    for epoch in range(num_epochs):
+        epoch_acc = []
+        for batch in dataloaders["train"]:
+            batch_len = batch[1].shape[0]
+            acc = 0
+            for param in model.parameters():
+                param.accumulated_grads = []
+
+            # Run the microbatches
+            for x, y in zip(batch[0], batch[1]):
+                x = torch.unsqueeze(x, 0).to(device)
+                y = torch.unsqueeze(y, 0).to(device)
+                y_hat = model(x)
+                loss = criterion(y_hat, y)
+                _, preds = torch.max(y_hat, 1)
+                acc += 1 if preds.data == y.data else 0
+                loss.backward()
+
+                # Clip each parameter's per-sample gradient
+                for param in model.parameters():
+                    per_sample_grad = param.grad.detach().clone()
+                    clip_grad_norm_(per_sample_grad, max_norm=max_grad_norm)  # in-place
+                    param.accumulated_grads.append(per_sample_grad)
+
+            # Aggregate back
+            for param in model.parameters():
+                # a = torch.sum(torch.stack(param.accumulated_grads, dim=0), dim=0)
+                param.grad = torch.sum(torch.stack(param.accumulated_grads, dim=0), dim=0)
+
+            # Now we are ready to update and add noise!
+            for param in model.parameters():
+                param = param - lr * param.grad
+                mean = torch.zeros(param.shape)
+                std = torch.full(param.shape, noise_multiplier * max_grad_norm)
+                param += torch.normal(mean=mean, std=std)
+
+                param.grad = torch.zeros(param.shape)  # Reset for next iteration
+
+            epoch_acc.append(acc / batch_len)
+
+            if (len(epoch_acc) % 10 == 0):
+                print("Batch Acc is {:.2f}".format(sum(epoch_acc) / len(epoch_acc)))
+
+        print("Epoch Acc is {:.2f}".format(sum(epoch_acc) / len(epoch_acc)))
+
+    return model
