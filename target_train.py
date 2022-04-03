@@ -15,7 +15,8 @@ from opacus.validators import ModuleValidator
 
 parser = argparse.ArgumentParser(description='Secure Covid Target Train')
 # parser.add_argument('--data_path', default='/content/COVID19-DATASET', type=str, help='Path to store the data')
-parser.add_argument('--data_path', default='/Users/michaelma/Desktop/Workspace/School/UBC/courses/2021-22-Winter-Term2/EECE571J/project/data/content/COVID19-DATASET', type=str, help='Path to store the data')
+# parser.add_argument('--data_path', default='/Users/michaelma/Desktop/Workspace/School/UBC/courses/2021-22-Winter-Term2/EECE571J/project/data/content/COVID19-DATASET', type=str, help='Path to store the data')
+parser.add_argument('--data_path', default='/Users/michaelma/Desktop/Workspace/School/UBC/courses/2021-22-Winter-Term2/EECE571J/project/data/content 2/COVID19_Target', type=str, help='Path to store the data')
 parser.add_argument('--out_path', default='/content/drive/MyDrive/MEDICAL/trained', type=str,
                     help='Path to store the trained model')
 parser.add_argument('--weight_path',
