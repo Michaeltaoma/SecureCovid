@@ -9,9 +9,6 @@ import torch.optim as optim
 from preprocess import preprocess
 from trainer import train
 from model import model_manager
-import util
-from opacus import PrivacyEngine
-from opacus.validators import ModuleValidator
 
 parser = argparse.ArgumentParser(description='Secure Covid Target Train')
 # parser.add_argument('--data_path', default='/content/COVID19-DATASET', type=str, help='Path to store the data')
@@ -25,7 +22,7 @@ parser.add_argument('--weight_path',
 parser.add_argument('--res_path', default='/content/drive/MyDrive/EECE571J/m2_result/final_folder', type=str,
                     help='Path to store the training result')
 parser.add_argument('--mode', default='train', type=str, help='Select whether to train, evaluate, inference the model')
-parser.add_argument('--dp', default=False, type=bool, help='Use dp?')
+parser.add_argument('--dp', default=True, type=bool, help='Use dp?')
 parser.add_argument('--model', default='covidnet', type=str, help='Select which model to use')
 parser.add_argument('--valid_size', default=.2, type=float, help='Proportion of data used as validation set')
 parser.add_argument('--learning_rate', default=.003, type=float, help='Default learning rate')
@@ -64,7 +61,6 @@ if args.mode.__eq__("train"):
     result_path = result_path.joinpath("{}_{}_{}.png".format(args.mode, args.name, time.time()))
 
     if args.dp:
-        print("dp")
         criterion = nn.CrossEntropyLoss()
 
         optimizer = optim.Adam(target.parameters(), lr=learning_rate)
@@ -94,7 +90,7 @@ if args.mode.__eq__("train"):
 
     print("Shadow Model saved to {}".format(saved_path))
 
-    print("Result image saved to {}".format(result_path))
+    # print("Result image saved to {}".format(result_path))
 
 elif args.mode.__eq__("eval"):
     print("to eval")
