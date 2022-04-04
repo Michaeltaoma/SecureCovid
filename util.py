@@ -19,11 +19,12 @@ def prepare_name(df_dir):
     return list(df[1])
 
 
-def toFig(loss_rec, acc_rec, saved_path, added_name=""):
-    epoch = len(loss_rec)
-    plt.plot(range(epoch), loss_rec, label="loss")
-    plt.plot(range(epoch), acc_rec, label="accuracy")
-    plt.title("{} Model training".format(added_name))
+def toFig(train_rec, val_rec, saved_path, fig_num, added_name=""):
+    epoch = len(train_rec)
+    plt.figure(fig_num)
+    plt.plot(range(epoch), train_rec, label="Train")
+    plt.plot(range(epoch), val_rec, label="Validation")
+    plt.title(added_name)
     plt.xlabel("Epoch")
     plt.ylabel("Metrics")
     plt.legend(loc='upper right')

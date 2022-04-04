@@ -25,7 +25,7 @@ parser.add_argument('--weight_path',
 parser.add_argument('--res_path', default='/content/drive/MyDrive/EECE571J/m2_result/final_folder', type=str,
                     help='Path to store the training result')
 parser.add_argument('--mode', default='train', type=str, help='Select whether to train, evaluate, inference the model')
-parser.add_argument('--dp', default=True, type=bool, help='Use dp?')
+parser.add_argument('--dp', default=False, type=bool, help='Use dp?')
 parser.add_argument('--model', default='covidnet', type=str, help='Select which model to use')
 parser.add_argument('--valid_size', default=.2, type=float, help='Proportion of data used as validation set')
 parser.add_argument('--learning_rate', default=.003, type=float, help='Default learning rate')

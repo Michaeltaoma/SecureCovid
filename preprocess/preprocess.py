@@ -64,7 +64,7 @@ def load_attack_set(dataset, valid_size):
     return trainloader, testloader, dataset_size
 
 
-def load_split_train_test(datadir, valid_size=.2, transform=None):
+def load_split_train_test(datadir, valid_size=.2, transform=None, batch_size=8):
     if transform is None:
         transform = data_transforms
     if transform is None:
@@ -82,14 +82,14 @@ def load_split_train_test(datadir, valid_size=.2, transform=None):
     train_sampler = SubsetRandomSampler(train_idx)
     test_sampler = SubsetRandomSampler(test_idx)
     trainloader = torch.utils.data.DataLoader(train_data,
-                                              sampler=train_sampler, batch_size=8)
+                                              sampler=train_sampler, batch_size=batch_size)
     testloader = torch.utils.data.DataLoader(test_data,
-                                             sampler=test_sampler, batch_size=8)
+                                             sampler=test_sampler, batch_size=batch_size)
     return trainloader, testloader, dataset_size
 
 
-def load_all_train(datadir, transform=None):
-    trainloader, _, _ = load_split_train_test(datadir, 0.0, transform)
+def load_all_data(datadir, transform=None):
+    trainloader, _, _ = load_split_train_test(datadir, 0.0, transform, 1)
     return trainloader
 
 

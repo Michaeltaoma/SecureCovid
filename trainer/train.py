@@ -64,8 +64,9 @@ def train_attack_model(device, model, criterion, optimizer, dataloaders, num_epo
         loss_stats['val'].append(val_epoch_loss / len(val_loader))
         accuracy_stats['train'].append(train_epoch_acc / len(train_loader))
         accuracy_stats['val'].append(val_epoch_acc / len(val_loader))
-        print(
-            f'Epoch {e + 0:02}: | Train Loss: {train_epoch_loss / len(train_loader):.5f} | Val Loss: {val_epoch_loss / len(val_loader):.5f} | Train Acc: {train_epoch_acc / len(train_loader):.3f}%| Val Acc: {val_epoch_acc / len(val_loader):.3f}%')
+        if e % 20000 == 0:
+            print(
+                f'Epoch {e + 0:02}: | Train Loss: {train_epoch_loss / len(train_loader):.5f} | Val Loss: {val_epoch_loss / len(val_loader):.5f} | Train Acc: {train_epoch_acc / len(train_loader):.3f}%| Val Acc: {val_epoch_acc / len(val_loader):.3f}%')
 
     return model, loss_stats, accuracy_stats
 

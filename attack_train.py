@@ -19,18 +19,18 @@ parser.add_argument('--input_path',
 parser.add_argument('--target_path',
                     default='/Users/michaelma/Desktop/Workspace/School/UBC/courses/2021-22-Winter-Term2/EECE571J/project/SecureCovid/data/partition/covid_target.pkl',
                     type=str, help='Path to store the data')
-parser.add_argument('--out_path', default='/content/drive/MyDrive/MEDICAL/trained/attack_model', type=str,
+parser.add_argument('--out_path', default='/Users/michaelma/Desktop/Workspace/School/UBC/courses/2021-22-Winter-Term2/EECE571J/project/SecureCovid/temp', type=str,
                     help='Path to store the trained model')
 parser.add_argument('--weight_path',
                     default='/content/drive/MyDrive/MEDICAL/trained/best_shadow_1647045058.8686106.pth', type=str,
                     help='Path to load the trained model')
-parser.add_argument('--res_path', default='/content/drive/MyDrive/EECE571J/m2_result/final_folder', type=str, help='Path to store the result')
+parser.add_argument('--res_path', default='/Users/michaelma/Desktop/Workspace/School/UBC/courses/2021-22-Winter-Term2/EECE571J/project/SecureCovid/image', type=str, help='Path to store the result')
 parser.add_argument('--mode', default='train', type=str, help='Select whether to train, evaluate, inference the model')
 parser.add_argument('--label', default='covid', type=str, help='Select the label for the attack model')
 parser.add_argument('--valid_size', default=.25, type=float, help='Proportion of data used as validation set')
 parser.add_argument('--learning_rate', default=.003, type=float, help='Default learning rate')
-parser.add_argument('--epoch', default=10, type=int, help='epoch number')
-parser.add_argument('--name', default="best_attack", type=str, help='Name of the model')
+parser.add_argument('--epoch', default=100, type=int, help='epoch number')
+parser.add_argument('--name', default="attack", type=str, help='Name of the model')
 args = parser.parse_args()
 
 train_path = Path(args.input_path)
@@ -54,8 +54,8 @@ if args.mode.__eq__("train"):
     saved_path = saved_path.joinpath("{}_{}_{}.pth".format(args.label, args.name, time.time()))
 
     result_path = Path(args.res_path)
-    train_result_path = result_path.joinpath("train_{}_{}_{}.png".format(args.label, args.name, time.time()))
-    val_result_path = result_path.joinpath("val_{}_{}_{}.png".format(args.label, args.name, time.time()))
+    train_result_path = result_path.joinpath("loss_{}_{}_{}.png".format(args.label, args.name, time.time()))
+    val_result_path = result_path.joinpath("acc_{}_{}_{}.png".format(args.label, args.name, time.time()))
 
     learning_rate = args.learning_rate
 
@@ -65,11 +65,11 @@ if args.mode.__eq__("train"):
 
     optimizer = optim.Adam(attack.parameters(), lr=learning_rate)
 
-    best_attack, loss_stat, accuracy_stat = train.train_attack_model(device, attack, criterion, optimizer, dataloaders, 20)
+    best_attack, loss_stat, accuracy_stat = train.train_attack_model(device, attack, criterion, optimizer, dataloaders, args.epoch)
 
-    util.toFig(loss_stat['train'], accuracy_stat['train'], train_result_path, "Train")
+    util.toFig(loss_stat['train'], loss_stat['val'], train_result_path, 0, "Loss")
 
-    util.toFig(loss_stat['val'], accuracy_stat['val'], val_result_path, "Val")
+    util.toFig(accuracy_stat['train'], accuracy_stat['val'], val_result_path, 1, "Accuracy")
 
     torch.save(best_attack.state_dict(), saved_path)
 
