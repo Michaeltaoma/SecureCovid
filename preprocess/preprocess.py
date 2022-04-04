@@ -46,7 +46,7 @@ covid_test_transforms = transforms.Compose([
 ])
 
 
-def load_attack_set(dataset, valid_size):
+def load_attack_set(dataset, valid_size, batc_size):
     train_data = dataset
     test_data = dataset
     num_train = len(train_data)
@@ -58,10 +58,15 @@ def load_attack_set(dataset, valid_size):
     train_sampler = SubsetRandomSampler(train_idx)
     test_sampler = SubsetRandomSampler(test_idx)
     trainloader = torch.utils.data.DataLoader(train_data,
-                                              sampler=train_sampler, batch_size=8)
+                                              sampler=train_sampler, batch_size=batc_size)
     testloader = torch.utils.data.DataLoader(test_data,
-                                             sampler=test_sampler, batch_size=8)
+                                             sampler=test_sampler, batch_size=batc_size)
     return trainloader, testloader, dataset_size
+
+
+def load_all_attack(dataset, batch_size):
+    trainloader, _, _ = load_attack_set(dataset, 0.0, batch_size)
+    return trainloader
 
 
 def load_split_train_test(datadir, valid_size=.2, transform=None, batch_size=8):

@@ -6,6 +6,7 @@ import preprocess
 import pandas as pd
 import os
 import torch
+from scipy.interpolate import make_interp_spline, BSpline
 
 
 def prepare_name(df_dir):
@@ -27,6 +28,23 @@ def toFig(train_rec, val_rec, saved_path, fig_num, added_name=""):
     plt.title(added_name)
     plt.xlabel("Epoch")
     plt.ylabel("Metrics")
+    plt.legend(loc='upper right')
+    plt.savefig(saved_path)
+
+
+def toFig_smooth(train_rec, val_rec, saved_path, fig_num, metric, added_name=""):
+    epoch = len(train_rec)
+    plt.figure(fig_num)
+    epoch_new = np.linspace(0, epoch - 1, 300)
+    smooth_train = make_interp_spline(range(epoch), train_rec, k=5)
+    smooth_val = make_interp_spline(range(epoch), val_rec, k=3)
+    epoch_new_train = smooth_train(epoch_new)
+    epoch_new_val = smooth_val(epoch_new)
+    plt.plot(epoch_new, epoch_new_train, label="Train")
+    plt.plot(epoch_new, epoch_new_val, label="Validation")
+    plt.title(added_name)
+    plt.xlabel("Epoch")
+    plt.ylabel(metric)
     plt.legend(loc='upper right')
     plt.savefig(saved_path)
 
@@ -159,5 +177,3 @@ def fromPickle(path):
     with open(path, 'rb') as handle:
         obj = pickle.load(handle)
     return obj
-
-

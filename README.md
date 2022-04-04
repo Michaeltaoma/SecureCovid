@@ -79,3 +79,28 @@ optional arguments:
   --name NAME           Name of the model
 ```
 
+
+
+## Test
+
+### Test Set
+
+| Out-of-Training | In-Training | Total |
+| --------------- | ----------- | ----- |
+| 400             | 400         | 800   |
+
+### Shadow = 1 Performance
+
+|          | Accuracy | Loss   |
+| -------- | -------- | ------ |
+| Positive | 0.5241   | 0.8337 |
+| Negative | 0.5509   | 0.7522 |
+
+
+
+### Shadow = 5 Performance
+
+|          | Accuracy | Loss   |
+| -------- | -------- | ------ |
+| Positive | 0.5293   | 0.7356 |
+| Negative | 0.5106   | 0.7891 |
