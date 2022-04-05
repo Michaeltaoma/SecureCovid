@@ -2,10 +2,33 @@ import _pickle as pickle
 import matplotlib.pyplot as plt
 import numpy as np
 import itertools
-import preprocess
+from preprocess import preprocess
 import pandas as pd
 import os
 import torch
+from scipy.interpolate import make_interp_spline, BSpline
+
+
+def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█', printEnd = "\r"):
+    """
+    Call in a loop to create terminal progress bar
+    @params:
+        iteration   - Required  : current iteration (Int)
+        total       - Required  : total iterations (Int)
+        prefix      - Optional  : prefix string (Str)
+        suffix      - Optional  : suffix string (Str)
+        decimals    - Optional  : positive number of decimals in percent complete (Int)
+        length      - Optional  : character length of bar (Int)
+        fill        - Optional  : bar fill character (Str)
+        printEnd    - Optional  : end character (e.g. "\r", "\r\n") (Str)
+    """
+    percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
+    filledLength = int(length * iteration // total)
+    bar = fill * filledLength + '-' * (length - filledLength)
+    print(f'\r{prefix} |{bar}| {percent}% {suffix}', end = printEnd)
+    # Print New Line on Complete
+    if iteration == total:
+        print()
 
 
 def prepare_name(df_dir):
@@ -19,13 +42,31 @@ def prepare_name(df_dir):
     return list(df[1])
 
 
-def toFig(loss_rec, acc_rec, saved_path, added_name=""):
-    epoch = len(loss_rec)
-    plt.plot(range(epoch), loss_rec, label="loss")
-    plt.plot(range(epoch), acc_rec, label="accuracy")
-    plt.title("{} Model training".format(added_name))
+def toFig(train_rec, val_rec, saved_path, fig_num, added_name=""):
+    epoch = len(train_rec)
+    plt.figure(fig_num)
+    plt.plot(range(epoch), train_rec, label="Train")
+    plt.plot(range(epoch), val_rec, label="Validation")
+    plt.title(added_name)
     plt.xlabel("Epoch")
     plt.ylabel("Metrics")
+    plt.legend(loc='upper right')
+    plt.savefig(saved_path)
+
+
+def toFig_smooth(train_rec, val_rec, saved_path, fig_num, metric, added_name=""):
+    epoch = len(train_rec)
+    plt.figure(fig_num)
+    epoch_new = np.linspace(0, epoch - 1, 300)
+    smooth_train = make_interp_spline(range(epoch), train_rec, k=5)
+    smooth_val = make_interp_spline(range(epoch), val_rec, k=3)
+    epoch_new_train = smooth_train(epoch_new)
+    epoch_new_val = smooth_val(epoch_new)
+    plt.plot(epoch_new, epoch_new_train, label="Train")
+    plt.plot(epoch_new, epoch_new_val, label="Validation")
+    plt.title(added_name)
+    plt.xlabel("Epoch")
+    plt.ylabel(metric)
     plt.legend(loc='upper right')
     plt.savefig(saved_path)
 
@@ -127,7 +168,7 @@ def visualize_model(device, model, dataloaders, class_names, num_images=6):
 
 def imshow(inp, size=(30, 30), title=None):
     """Imshow for Tensor."""
-    inp = inp.numpy().transpose((1, 2, 0))
+    inp = inp.detach().numpy().transpose((1, 2, 0))
     mean = preprocess.mean_nums
     std = preprocess.std_nums
     inp = std * inp + mean
@@ -158,5 +199,3 @@ def fromPickle(path):
     with open(path, 'rb') as handle:
         obj = pickle.load(handle)
     return obj
-
-

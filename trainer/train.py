@@ -64,8 +64,9 @@ def train_attack_model(device, model, criterion, optimizer, dataloaders, num_epo
         loss_stats['val'].append(val_epoch_loss / len(val_loader))
         accuracy_stats['train'].append(train_epoch_acc / len(train_loader))
         accuracy_stats['val'].append(val_epoch_acc / len(val_loader))
-        print(
-            f'Epoch {e + 0:02}: | Train Loss: {train_epoch_loss / len(train_loader):.5f} | Val Loss: {val_epoch_loss / len(val_loader):.5f} | Train Acc: {train_epoch_acc / len(train_loader):.3f}%| Val Acc: {val_epoch_acc / len(val_loader):.3f}%')
+        if e % 2000 == 0:
+            print(
+                f'Epoch {e + 0:02}: | Train Loss: {train_epoch_loss / len(train_loader):.5f} | Val Loss: {val_epoch_loss / len(val_loader):.5f} | Train Acc: {train_epoch_acc / len(train_loader):.3f}%| Val Acc: {val_epoch_acc / len(val_loader):.3f}%')
 
     return model, loss_stats, accuracy_stats
 
@@ -117,7 +118,7 @@ def train_model(device, model, criterion, optimizer, scheduler, data_sizes, data
                 val_kappa.append(cohen_kappa_score(preds.cpu().numpy(), labels.data.cpu().numpy()))
             epoch_loss = current_loss / data_sizes[phase]
             epoch_acc = current_corrects.double() / data_sizes[phase]
-            epoch_loss_record.append(epoch_loss)
+            epoch_loss_record.append(epoch_loss.cpu())
             epoch_acc_record.append(epoch_acc.cpu())
             if phase == 'val':
                 epoch_kappa = np.mean(val_kappa)
@@ -179,7 +180,7 @@ def train_model_with_dp(device, model, criterion, dataloaders, num_epochs=10, no
                 param = param - lr * param.grad
                 mean = torch.zeros(param.shape)
                 std = torch.full(param.shape, noise_multiplier * max_grad_norm)
-                param += torch.normal(mean=mean, std=std)
+                param += torch.normal(mean=mean, std=std).to(device)
 
                 param.grad = torch.zeros(param.shape)  # Reset for next iteration
 

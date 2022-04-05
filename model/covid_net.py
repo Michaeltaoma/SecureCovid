@@ -109,7 +109,7 @@ class CovidNet(nn.Module):
 
         self.add_module('classifier', nn.Linear(512, n_classes))
         for m in self.modules():
-            print(m)
+            # print(m)
             if isinstance(m, nn.Conv2d):
                 nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
             elif isinstance(m, (nn.BatchNorm2d, nn.GroupNorm)):
@@ -196,3 +196,6 @@ class CovidNet(nn.Module):
         # fc2out = F.relu(self.fc2(fc1out))
         logits = self.classifier(fc1out)
         return logits
+
+    def __repr__(self):
+        return "Covid Net model loaded"

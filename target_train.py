@@ -9,9 +9,6 @@ import torch.optim as optim
 from preprocess import preprocess
 from trainer import train
 from model import model_manager
-import util
-from opacus import PrivacyEngine
-from opacus.validators import ModuleValidator
 
 parser = argparse.ArgumentParser(description='Secure Covid Target Train')
 # parser.add_argument('--data_path', default='/content/COVID19-DATASET', type=str, help='Path to store the data')
@@ -64,7 +61,6 @@ if args.mode.__eq__("train"):
     result_path = result_path.joinpath("{}_{}_{}.png".format(args.mode, args.name, time.time()))
 
     if args.dp:
-        print("dp")
         criterion = nn.CrossEntropyLoss()
 
         optimizer = optim.Adam(target.parameters(), lr=learning_rate)
@@ -94,7 +90,7 @@ if args.mode.__eq__("train"):
 
     print("Shadow Model saved to {}".format(saved_path))
 
-    print("Result image saved to {}".format(result_path))
+    # print("Result image saved to {}".format(result_path))
 
 elif args.mode.__eq__("eval"):
     print("to eval")

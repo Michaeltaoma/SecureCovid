@@ -3,6 +3,8 @@ import numpy as np
 import torch
 from torchvision import datasets, models, transforms
 from torch.utils.data.sampler import SubsetRandomSampler
+from PIL import Image
+from torch.autograd import Variable
 
 mean_nums = [0.485, 0.456, 0.406]
 std_nums = [0.229, 0.224, 0.225]
@@ -46,7 +48,22 @@ covid_test_transforms = transforms.Compose([
 ])
 
 
-def load_attack_set(dataset, valid_size):
+def pil_loader(path):
+    with open(path, 'rb') as f:
+        with Image.open(f) as img:
+            return img.convert('RGB')
+
+
+def load_single_image(device, img_path):
+    image = pil_loader(img_path)
+    image.show()
+    image = covid_test_transforms(image).float()
+    image = Variable(image, requires_grad=True)
+    image = image.unsqueeze(0)
+    return image.to(device)
+
+
+def load_attack_set(dataset, valid_size, batc_size):
     train_data = dataset
     test_data = dataset
     num_train = len(train_data)
@@ -58,13 +75,18 @@ def load_attack_set(dataset, valid_size):
     train_sampler = SubsetRandomSampler(train_idx)
     test_sampler = SubsetRandomSampler(test_idx)
     trainloader = torch.utils.data.DataLoader(train_data,
-                                              sampler=train_sampler, batch_size=8)
+                                              sampler=train_sampler, batch_size=batc_size)
     testloader = torch.utils.data.DataLoader(test_data,
-                                             sampler=test_sampler, batch_size=8)
+                                             sampler=test_sampler, batch_size=batc_size)
     return trainloader, testloader, dataset_size
 
 
-def load_split_train_test(datadir, valid_size=.2, transform=None):
+def load_all_attack(dataset, batch_size):
+    trainloader, _, _ = load_attack_set(dataset, 0.0, batch_size)
+    return trainloader
+
+
+def load_split_train_test(datadir, valid_size=.2, transform=None, batch_size=8):
     if transform is None:
         transform = data_transforms
     if transform is None:
@@ -82,14 +104,14 @@ def load_split_train_test(datadir, valid_size=.2, transform=None):
     train_sampler = SubsetRandomSampler(train_idx)
     test_sampler = SubsetRandomSampler(test_idx)
     trainloader = torch.utils.data.DataLoader(train_data,
-                                              sampler=train_sampler, batch_size=8)
+                                              sampler=train_sampler, batch_size=batch_size)
     testloader = torch.utils.data.DataLoader(test_data,
-                                             sampler=test_sampler, batch_size=8)
+                                             sampler=test_sampler, batch_size=batch_size)
     return trainloader, testloader, dataset_size
 
 
-def load_all_train(datadir, transform=None):
-    trainloader, _, _ = load_split_train_test(datadir, 0.0, transform)
+def load_all_data(datadir, transform=None):
+    trainloader, _, _ = load_split_train_test(datadir, 0.0, transform, 1)
     return trainloader
 
 
