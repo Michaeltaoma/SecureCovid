@@ -89,7 +89,7 @@ optional arguments:
 | --------------- | ----------- | ----- |
 | 400             | 400         | 800   |
 
-### Shadow = 1 Performance
+### Shadow = 1, No Differential Privacy
 
 |          | Accuracy | Loss   |
 | -------- | -------- | ------ |
@@ -98,9 +98,29 @@ optional arguments:
 
 
 
-### Shadow = 5 Performance
+### Shadow = 5, No Differential Privacy
 
 |          | Accuracy | Loss   |
 | -------- | -------- | ------ |
 | Positive | 0.5293   | 0.7356 |
 | Negative | 0.5106   | 0.7891 |
+
+---
+
+
+
+### Shadow = 1, Differential Privacy
+
+|          | Accuracy | Loss   |
+| -------- | -------- | ------ |
+| Positive | 0.4998   | 0.8170 |
+| Negative | 0.5092   | 0.7825 |
+
+
+
+### Shadow = 5, Differential Privacy
+
+|          | Accuracy | Loss   |
+| -------- | -------- | ------ |
+| Positive | 0.5020   | 0.7553 |
+| Negative | 0.4925   | 0.7980 |

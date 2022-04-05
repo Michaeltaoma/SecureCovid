@@ -3,6 +3,8 @@ import numpy as np
 import torch
 from torchvision import datasets, models, transforms
 from torch.utils.data.sampler import SubsetRandomSampler
+from PIL import Image
+from torch.autograd import Variable
 
 mean_nums = [0.485, 0.456, 0.406]
 std_nums = [0.229, 0.224, 0.225]
@@ -44,6 +46,21 @@ covid_test_transforms = transforms.Compose([
     transforms.ToTensor(),
     transforms.Normalize(mean=mean_nums, std=std_nums)
 ])
+
+
+def pil_loader(path):
+    with open(path, 'rb') as f:
+        with Image.open(f) as img:
+            return img.convert('RGB')
+
+
+def load_single_image(device, img_path):
+    image = pil_loader(img_path)
+    image.show()
+    image = covid_test_transforms(image).float()
+    image = Variable(image, requires_grad=True)
+    image = image.unsqueeze(0)
+    return image.to(device)
 
 
 def load_attack_set(dataset, valid_size, batc_size):

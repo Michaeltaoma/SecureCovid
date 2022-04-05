@@ -2,11 +2,33 @@ import _pickle as pickle
 import matplotlib.pyplot as plt
 import numpy as np
 import itertools
-import preprocess
+from preprocess import preprocess
 import pandas as pd
 import os
 import torch
 from scipy.interpolate import make_interp_spline, BSpline
+
+
+def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█', printEnd = "\r"):
+    """
+    Call in a loop to create terminal progress bar
+    @params:
+        iteration   - Required  : current iteration (Int)
+        total       - Required  : total iterations (Int)
+        prefix      - Optional  : prefix string (Str)
+        suffix      - Optional  : suffix string (Str)
+        decimals    - Optional  : positive number of decimals in percent complete (Int)
+        length      - Optional  : character length of bar (Int)
+        fill        - Optional  : bar fill character (Str)
+        printEnd    - Optional  : end character (e.g. "\r", "\r\n") (Str)
+    """
+    percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
+    filledLength = int(length * iteration // total)
+    bar = fill * filledLength + '-' * (length - filledLength)
+    print(f'\r{prefix} |{bar}| {percent}% {suffix}', end = printEnd)
+    # Print New Line on Complete
+    if iteration == total:
+        print()
 
 
 def prepare_name(df_dir):
@@ -146,7 +168,7 @@ def visualize_model(device, model, dataloaders, class_names, num_images=6):
 
 def imshow(inp, size=(30, 30), title=None):
     """Imshow for Tensor."""
-    inp = inp.numpy().transpose((1, 2, 0))
+    inp = inp.detach().numpy().transpose((1, 2, 0))
     mean = preprocess.mean_nums
     std = preprocess.std_nums
     inp = std * inp + mean

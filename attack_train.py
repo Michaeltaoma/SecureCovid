@@ -15,17 +15,22 @@ import util
 
 parser = argparse.ArgumentParser(description='Secure Covid')
 parser.add_argument('--input_path',
-                    default='/Users/michaelma/Desktop/Workspace/School/UBC/courses/2021-22-Winter-Term2/EECE571J/project/SecureCovid/data/attack_train/test/covid_y_pred.pkl',
+                    default='/Users/michaelma/Desktop/Workspace/School/UBC/courses/2021-22-Winter-Term2/EECE571J/project/SecureCovid/data/attack_train/test/dp/covid_y_pred.pkl',
                     type=str, help='Path to store the data')
 parser.add_argument('--target_path',
-                    default='/Users/michaelma/Desktop/Workspace/School/UBC/courses/2021-22-Winter-Term2/EECE571J/project/SecureCovid/data/attack_train/test/covid_target.pkl',
+                    default='/Users/michaelma/Desktop/Workspace/School/UBC/courses/2021-22-Winter-Term2/EECE571J/project/SecureCovid/data/attack_train/test/dp/covid_target.pkl',
                     type=str, help='Path to store the data')
-parser.add_argument('--out_path', default='/Users/michaelma/Desktop/Workspace/School/UBC/courses/2021-22-Winter-Term2/EECE571J/project/SecureCovid/temp', type=str,
+parser.add_argument('--out_path',
+                    default='/Users/michaelma/Desktop/Workspace/School/UBC/courses/2021-22-Winter-Term2/EECE571J/project/SecureCovid/temp',
+                    type=str,
                     help='Path to store the trained model')
 parser.add_argument('--weight_path',
-                    default='/Users/michaelma/Desktop/Workspace/School/UBC/courses/2021-22-Winter-Term2/EECE571J/project/SecureCovid/temp/five/covid_attack_1649110011.8203351.pth', type=str,
+                    default='/Users/michaelma/Desktop/Workspace/School/UBC/courses/2021-22-Winter-Term2/EECE571J/project/SecureCovid/temp/one/covid_attack_1649101868.594678.pth',
+                    type=str,
                     help='Path to load the trained model')
-parser.add_argument('--res_path', default='/Users/michaelma/Desktop/Workspace/School/UBC/courses/2021-22-Winter-Term2/EECE571J/project/SecureCovid/image', type=str, help='Path to store the result')
+parser.add_argument('--res_path',
+                    default='/Users/michaelma/Desktop/Workspace/School/UBC/courses/2021-22-Winter-Term2/EECE571J/project/SecureCovid/image',
+                    type=str, help='Path to store the result')
 parser.add_argument('--mode', default='eval', type=str, help='Select whether to train, evaluate, inference the model')
 parser.add_argument('--label', default='no_covid', type=str, help='Select the label for the attack model')
 parser.add_argument('--valid_size', default=.25, type=float, help='Proportion of data used as validation set')
@@ -33,8 +38,6 @@ parser.add_argument('--learning_rate', default=.003, type=float, help='Default l
 parser.add_argument('--epoch', default=100, type=int, help='epoch number')
 parser.add_argument('--name', default="attack", type=str, help='Name of the model')
 args = parser.parse_args()
-
-
 
 if torch.cuda.is_available():
     device = torch.device("cuda:0")
@@ -68,7 +71,8 @@ if args.mode.__eq__("train"):
 
     optimizer = optim.Adam(attack.parameters(), lr=learning_rate)
 
-    best_attack, loss_stat, accuracy_stat = train.train_attack_model(device, attack, criterion, optimizer, dataloaders, args.epoch)
+    best_attack, loss_stat, accuracy_stat = train.train_attack_model(device, attack, criterion, optimizer, dataloaders,
+                                                                     args.epoch)
 
     util.toFig_smooth(loss_stat['train'], loss_stat['val'], train_result_path, 0, "Loss", "Loss")
 
@@ -86,7 +90,7 @@ elif args.mode.__eq__("eval"):
     target_path = Path(args.target_path)
 
     test_data = AttackData(test_path, target_path)
-    test_dataloader = preprocess.load_all_attack(test_data, batch_size = 8)
+    test_dataloader = preprocess.load_all_attack(test_data, batch_size=8)
 
     attack = AttackModel(2, 64, 1)
 
@@ -96,6 +100,9 @@ elif args.mode.__eq__("eval"):
     criterion = nn.BCEWithLogitsLoss()
     batch_acc = []
     batch_loss = []
+
+    attack.eval()
+
     with torch.no_grad():
         """
         Out-of-training-data data
@@ -110,7 +117,7 @@ elif args.mode.__eq__("eval"):
             batch_acc.append(acc)
             batch_loss.append(loss)
 
-    print("Accuracy is {}%, loss is {}".format(sum(batch_acc)/len(batch_acc), sum(batch_loss)/len(batch_loss)))
+    print("Accuracy is {}%, loss is {}".format(sum(batch_acc) / len(batch_acc), sum(batch_loss) / len(batch_loss)))
 
 elif args.mode.__eq__("infer"):
     print("infer")

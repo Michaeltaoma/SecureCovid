@@ -180,7 +180,7 @@ def train_model_with_dp(device, model, criterion, dataloaders, num_epochs=10, no
                 param = param - lr * param.grad
                 mean = torch.zeros(param.shape)
                 std = torch.full(param.shape, noise_multiplier * max_grad_norm)
-                param += torch.normal(mean=mean, std=std)
+                param += torch.normal(mean=mean, std=std).to(device)
 
                 param.grad = torch.zeros(param.shape)  # Reset for next iteration
 
