@@ -7,6 +7,10 @@ Implementation of secure covid project described in <a href="https://drive.googl
 
 can find most of the examples in <code>notebook</code>
 
+## Run Demo
+
+Simply `cd demo ; sh run_demo.sh`, it will display a cxr image and the model output if you have the path defined correctly.
+
 ## Shadow Model
 
 To train, first prepare for the image training data and run
