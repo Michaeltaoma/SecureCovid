@@ -42,6 +42,7 @@ target = load_model(device, "covidnet", [])
 target.load_state_dict(torch.load(args.target_weight_path, map_location=torch.device('cpu')))
 target.eval()
 img = preprocess.load_single_image(device, args.image_path)
+time.sleep(1)
 res = target(img)
 with torch.no_grad():
     y_test_pred = torch.log_softmax(res, dim=1)
